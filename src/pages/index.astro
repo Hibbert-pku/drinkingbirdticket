@@ -1,0 +1,128 @@
+---
+import { event } from "../content/event";
+const ts = Date.now();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{event.title}</title>
+    <meta name="description" content={`${event.title} · Tickets`} />
+  </head>
+
+  <body class="min-h-screen bg-white text-zinc-900">
+    <header class="sticky top-0 bg-white/80 backdrop-blur border-b">
+      <div class="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between">
+        <div class="font-semibold">{event.title}</div>
+        <a class="rounded px-3 py-2 border hover:bg-zinc-50" href="#buy">Buy tickets</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-4 py-10 space-y-10">
+      <!-- Hero -->
+      <section class="space-y-3">
+        <h1 class="text-3xl font-bold">{event.title}</h1>
+        <div class="text-zinc-600">{event.date} · {event.venue}</div>
+        <img class="w-full rounded-xl border" src={event.heroImage} alt="Event poster" loading="lazy" />
+        <div class="flex gap-3">
+          <a class="rounded bg-black text-white px-4 py-2" href="#buy">Get tickets</a>
+          <a class="rounded border px-4 py-2" href="#payment">Payment</a>
+        </div>
+      </section>
+
+      <!-- Tickets -->
+      <section class="space-y-4" id="tickets">
+        <h2 class="text-2xl font-semibold">Tickets</h2>
+        <div class="grid gap-4">
+          {event.tickets.map(t => (
+            <div class="rounded-xl border p-4 flex items-start justify-between gap-4">
+              <div>
+                <div class="font-semibold">{t.name}</div>
+                <div class="text-zinc-600">${t.price} · {t.note}</div>
+              </div>
+              <a class="rounded border px-3 py-2 hover:bg-zinc-50" href={`#buy?ticket=${t.id}`}>Select</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Order form (no backend; mailto) -->
+      <section class="space-y-4" id="buy">
+        <h2 class="text-2xl font-semibold">Order (manual confirmation)</h2>
+        <p class="text-zinc-600">
+          Submit the form, then pay via {event.payment.method}. We’ll confirm manually.
+        </p>
+
+        <form class="space-y-3 rounded-xl border p-4"
+              method="GET"
+              action="/success">
+          <input type="hidden" name="order" value={`ORDER-${ts}`} />
+          <div class="grid gap-2">
+            <label class="text-sm">Name</label>
+            <input class="border rounded px-3 py-2" name="name" required />
+          </div>
+          <div class="grid gap-2">
+            <label class="text-sm">Email</label>
+            <input class="border rounded px-3 py-2" type="email" name="email" required />
+          </div>
+          <div class="grid gap-2">
+            <label class="text-sm">Ticket type</label>
+            <select class="border rounded px-3 py-2" name="ticket" required>
+              {event.tickets.map(t => <option value={t.id}>{t.name} (${t.price})</option>)}
+            </select>
+          </div>
+          <div class="grid gap-2">
+            <label class="text-sm">Quantity</label>
+            <input class="border rounded px-3 py-2" type="number" name="qty" min="1" max="10" value="1" required />
+          </div>
+          <div class="grid gap-2">
+            <label class="text-sm">Notes (optional)</label>
+            <textarea class="border rounded px-3 py-2" name="notes" rows="3"></textarea>
+          </div>
+
+          <button class="rounded bg-black text-white px-4 py-2" type="submit">
+            Submit order
+          </button>
+
+          <p class="text-xs text-zinc-500">
+            After submitting, you’ll see an order ID. Use it in your payment note.
+          </p>
+        </form>
+      </section>
+
+      <!-- Payment instructions -->
+      <section class="space-y-2" id="payment">
+        <h2 class="text-2xl font-semibold">Payment</h2>
+        <div class="rounded-xl border p-4 space-y-2">
+          <div><span class="font-medium">Method:</span> {event.payment.method}</div>
+          <div><span class="font-medium">Recipient:</span> {event.payment.recipient}</div>
+          <div><span class="font-medium">Payment note:</span> {event.payment.noteRule}</div>
+          <div class="text-zinc-600">{event.payment.confirmSla}</div>
+          <div class="text-zinc-600">
+            Contact: WeChat {event.contact.wechat} · Email {event.contact.email}
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="space-y-3">
+        <h2 class="text-2xl font-semibold">FAQ</h2>
+        <div class="space-y-3">
+          {event.faq.map(item => (
+            <div class="rounded-xl border p-4">
+              <div class="font-medium">{item.q}</div>
+              <div class="text-zinc-600">{item.a}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t">
+      <div class="mx-auto max-w-3xl px-4 py-6 text-sm text-zinc-600">
+        © {new Date().getFullYear()} · {event.title}
+      </div>
+    </footer>
+  </body>
+</html>
