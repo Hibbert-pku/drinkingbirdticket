@@ -1,24 +1,46 @@
 ---
+import "../styles/global.css";
+
 const url = new URL(Astro.request.url);
-const order = url.searchParams.get("order") ?? "ORDER-UNKNOWN";
+const order = url.searchParams.get("order") ?? "ORD-UNKNOWN";
 const name = url.searchParams.get("name") ?? "";
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Order received</title>
   </head>
-  <body class="min-h-screen bg-white text-zinc-900">
-    <main class="mx-auto max-w-2xl px-4 py-12 space-y-4">
-      <h1 class="text-2xl font-semibold">Order received ✅</h1>
-      <p>Your order ID:</p>
-      <div class="rounded border p-4 font-mono">{order}</div>
-      <p class="text-zinc-600">
-        Please include <b>{order}{name ? `-${name}` : ""}</b> in your payment note so we can match it quickly.
-      </p>
-      <a class="inline-block rounded border px-4 py-2" href="/">Back</a>
+
+  <body class="min-h-screen bg-zinc-50 text-zinc-900">
+    <main class="mx-auto max-w-2xl px-4 py-12">
+      <div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+        <h1 class="text-2xl font-semibold">Order received ✅</h1>
+
+        <p class="text-sm text-zinc-600">
+          Use this order ID in your payment note so we can match your payment quickly.
+        </p>
+
+        <div class="rounded-xl bg-zinc-50 p-4">
+          <div class="text-xs text-zinc-500">Order ID</div>
+          <div class="mt-1 font-mono text-lg">{order}</div>
+        </div>
+
+        <p class="text-sm text-zinc-600">
+          Payment note suggestion:
+          <span class="font-mono">{order}{name ? `-${name}` : ""}</span>
+        </p>
+
+        <div class="flex gap-2">
+          <a class="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm hover:bg-zinc-50" href="/">
+            Back
+          </a>
+          <a class="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800" href="/#payment">
+            View payment instructions
+          </a>
+        </div>
+      </div>
     </main>
   </body>
 </html>

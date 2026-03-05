@@ -1,129 +1,264 @@
 ---
-import { event } from "../content/event";
 import "../styles/global.css";
-const ts = Date.now();
+import { event } from "../content/event";
+
+// simple order id (stable enough for manual reconciliation)
+const orderId = `ORD-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>{event.title}</title>
     <meta name="description" content={`${event.title} · Tickets`} />
   </head>
 
-  <body class="min-h-screen bg-white text-zinc-900">
-    <header class="sticky top-0 bg-white/80 backdrop-blur border-b">
-      <div class="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between">
-        <div class="font-semibold">{event.title}</div>
-        <a class="rounded px-3 py-2 border hover:bg-zinc-50" href="#buy">Buy tickets</a>
+  <body class="min-h-screen bg-zinc-50 text-zinc-900">
+    <!-- Top bar -->
+    <header class="sticky top-0 z-50 border-b bg-white/80 backdrop-blur">
+      <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="h-8 w-8 rounded-lg bg-zinc-900"></div>
+          <div class="font-semibold leading-tight">
+            <div class="text-sm text-zinc-500">Tickets</div>
+            <div>{event.title}</div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <a href="#tickets" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">Tickets</a>
+          <a href="#payment" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">Payment</a>
+          <a href="#buy" class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+            Buy tickets
+          </a>
+        </div>
       </div>
     </header>
 
-    <main class="mx-auto max-w-3xl px-4 py-10 space-y-10">
+    <main class="mx-auto max-w-5xl px-4 py-10">
       <!-- Hero -->
-      <section class="space-y-3">
-        <h1 class="text-3xl font-bold">{event.title}</h1>
-        <div class="text-zinc-600">{event.date} · {event.venue}</div>
-        <img class="w-full rounded-xl border" src={event.heroImage} alt="Event poster" loading="lazy" />
-        <div class="flex gap-3">
-          <a class="rounded bg-black text-white px-4 py-2" href="#buy">Get tickets</a>
-          <a class="rounded border px-4 py-2" href="#payment">Payment</a>
+      <section class="grid gap-8 md:grid-cols-2 md:items-center">
+        <div class="space-y-4">
+          <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{event.title}</h1>
+          <div class="space-y-1 text-zinc-600">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">Date</span>
+              <span>{event.date}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">Venue</span>
+              <span>{event.venue}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 pt-2">
+            <a href="#buy" class="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800">
+              Get tickets
+            </a>
+            <a href="#tickets" class="rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm font-medium hover:bg-zinc-50">
+              View ticket types
+            </a>
+          </div>
+
+          <div class="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600">
+            <div class="font-medium text-zinc-900">Manual confirmation</div>
+            Submit the form, then pay via <b>{event.payment.method}</b>. We’ll confirm manually.
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+          <img
+            src={event.heroImage}
+            alt="Event poster"
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
         </div>
       </section>
 
       <!-- Tickets -->
-      <section class="space-y-4" id="tickets">
-        <h2 class="text-2xl font-semibold">Tickets</h2>
-        <div class="grid gap-4">
-          {event.tickets.map(t => (
-            <div class="rounded-xl border p-4 flex items-start justify-between gap-4">
-              <div>
-                <div class="font-semibold">{t.name}</div>
-                <div class="text-zinc-600">${t.price} · {t.note}</div>
+      <section id="tickets" class="mt-12">
+        <div class="mb-4 flex items-end justify-between">
+          <h2 class="text-2xl font-semibold">Tickets</h2>
+          <p class="text-sm text-zinc-600">Choose a ticket type, then fill the order form.</p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          {event.tickets.map((t) => (
+            <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-lg font-semibold">{t.name}</div>
+                  <div class="text-sm text-zinc-600">{t.note}</div>
+                </div>
+                <div class="text-xl font-bold">${t.price}</div>
               </div>
-              <a class="rounded border px-3 py-2 hover:bg-zinc-50" href={`#buy?ticket=${t.id}`}>Select</a>
-            </div>
+
+              <div class="mt-4">
+                <button
+                  class="w-full rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
+                  data-ticket={t.id}
+                  data-ticket-label={`${t.name} ($${t.price})`}
+                >
+                  Select
+                </button>
+              </div>
+            </article>
           ))}
         </div>
       </section>
 
-      <!-- Order form (no backend; mailto) -->
-      <section class="space-y-4" id="buy">
-        <h2 class="text-2xl font-semibold">Order (manual confirmation)</h2>
-        <p class="text-zinc-600">
-          Submit the form, then pay via {event.payment.method}. We’ll confirm manually.
-        </p>
-
-        <form class="space-y-3 rounded-xl border p-4"
-              method="GET"
-              action="/success">
-          <input type="hidden" name="order" value={`ORDER-${ts}`} />
-          <div class="grid gap-2">
-            <label class="text-sm">Name</label>
-            <input class="border rounded px-3 py-2" name="name" required />
-          </div>
-          <div class="grid gap-2">
-            <label class="text-sm">Email</label>
-            <input class="border rounded px-3 py-2" type="email" name="email" required />
-          </div>
-          <div class="grid gap-2">
-            <label class="text-sm">Ticket type</label>
-            <select class="border rounded px-3 py-2" name="ticket" required>
-              {event.tickets.map(t => <option value={t.id}>{t.name} (${t.price})</option>)}
-            </select>
-          </div>
-          <div class="grid gap-2">
-            <label class="text-sm">Quantity</label>
-            <input class="border rounded px-3 py-2" type="number" name="qty" min="1" max="10" value="1" required />
-          </div>
-          <div class="grid gap-2">
-            <label class="text-sm">Notes (optional)</label>
-            <textarea class="border rounded px-3 py-2" name="notes" rows="3"></textarea>
-          </div>
-
-          <button class="rounded bg-black text-white px-4 py-2" type="submit">
-            Submit order
-          </button>
-
-          <p class="text-xs text-zinc-500">
-            After submitting, you’ll see an order ID. Use it in your payment note.
+      <!-- Order form -->
+      <section id="buy" class="mt-12">
+        <div class="mb-4">
+          <h2 class="text-2xl font-semibold">Order</h2>
+          <p class="text-sm text-zinc-600">
+            After submitting, you’ll get an order ID. Use it in your payment note for fast matching.
           </p>
-        </form>
-      </section>
+        </div>
 
-      <!-- Payment instructions -->
-      <section class="space-y-2" id="payment">
-        <h2 class="text-2xl font-semibold">Payment</h2>
-        <div class="rounded-xl border p-4 space-y-2">
-          <div><span class="font-medium">Method:</span> {event.payment.method}</div>
-          <div><span class="font-medium">Recipient:</span> {event.payment.recipient}</div>
-          <div><span class="font-medium">Payment note:</span> {event.payment.noteRule}</div>
-          <div class="text-zinc-600">{event.payment.confirmSla}</div>
-          <div class="text-zinc-600">
-            Contact: WeChat {event.contact.wechat} · Email {event.contact.email}
-          </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          <form
+            class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+            method="GET"
+            action="/success"
+          >
+            <input type="hidden" name="order" value={orderId} />
+
+            <div class="grid gap-4">
+              <div>
+                <label class="mb-1 block text-sm font-medium">Name</label>
+                <input
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  name="name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium">Email</label>
+                <input
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  type="email"
+                  name="email"
+                  required
+                />
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-sm font-medium">Ticket type</label>
+                  <select
+                    id="ticketSelect"
+                    class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                    name="ticket"
+                    required
+                  >
+                    {event.tickets.map((t) => (
+                      <option value={t.id}>{t.name} (${t.price})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm font-medium">Quantity</label>
+                  <input
+                    class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                    type="number"
+                    name="qty"
+                    min="1"
+                    max="10"
+                    value="1"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium">Notes (optional)</label>
+                <textarea
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  name="notes"
+                  rows="4"
+                  placeholder="e.g. same table with friends, accessibility needs..."
+                ></textarea>
+              </div>
+
+              <button
+                class="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800"
+                type="submit"
+              >
+                Submit order
+              </button>
+
+              <div class="text-xs text-zinc-500">
+                Your order ID will be shown on the next page. Put it in payment note as required.
+              </div>
+            </div>
+          </form>
+
+          <!-- Payment box -->
+          <aside id="payment" class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold">Payment</h3>
+            <div class="mt-3 space-y-2 text-sm text-zinc-700">
+              <div class="flex justify-between gap-3">
+                <span class="text-zinc-500">Method</span>
+                <span class="font-medium">{event.payment.method}</span>
+              </div>
+              <div class="flex justify-between gap-3">
+                <span class="text-zinc-500">Recipient</span>
+                <span class="font-medium">{event.payment.recipient}</span>
+              </div>
+              <div class="rounded-xl bg-zinc-50 p-3 text-sm">
+                <div class="text-zinc-500">Payment note</div>
+                <div class="font-mono text-xs md:text-sm">{event.payment.noteRule}</div>
+              </div>
+              <div class="text-zinc-600">{event.payment.confirmSla}</div>
+            </div>
+
+            <div class="mt-5 rounded-xl border border-zinc-200 bg-white p-4 text-sm">
+              <div class="font-medium">Contact</div>
+              <div class="mt-1 text-zinc-600">
+                WeChat: <b>{event.contact.wechat}</b><br />
+                Email: <b>{event.contact.email}</b>
+              </div>
+            </div>
+          </aside>
         </div>
       </section>
 
       <!-- FAQ -->
-      <section class="space-y-3">
+      <section class="mt-12">
         <h2 class="text-2xl font-semibold">FAQ</h2>
-        <div class="space-y-3">
-          {event.faq.map(item => (
-            <div class="rounded-xl border p-4">
-              <div class="font-medium">{item.q}</div>
-              <div class="text-zinc-600">{item.a}</div>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {event.faq.map((item) => (
+            <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div class="font-semibold">{item.q}</div>
+              <div class="mt-2 text-sm text-zinc-600">{item.a}</div>
             </div>
           ))}
         </div>
       </section>
+
+      <footer class="mt-12 border-t border-zinc-200 py-8 text-sm text-zinc-600">
+        © {new Date().getFullYear()} · {event.title}
+      </footer>
     </main>
 
-    <footer class="border-t">
-      <div class="mx-auto max-w-3xl px-4 py-6 text-sm text-zinc-600">
-        © {new Date().getFullYear()} · {event.title}
-      </div>
-    </footer>
+    <!-- Small script: clicking "Select" sets ticket type and scrolls to form -->
+    <script>
+      (() => {
+        const select = document.getElementById("ticketSelect");
+        const buttons = document.querySelectorAll("button[data-ticket]");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-ticket");
+            if (select && id) select.value = id;
+            document.getElementById("buy")?.scrollIntoView({ behavior: "smooth" });
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
