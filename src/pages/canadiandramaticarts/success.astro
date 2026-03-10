@@ -1,0 +1,90 @@
+---
+import "../../styles/global.css";
+---
+
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>订单已提交</title>
+</head>
+
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
+
+<main class="mx-auto max-w-2xl px-4 py-16">
+
+<div class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
+
+<h1 class="text-2xl font-semibold">
+订单已提交 ✅
+</h1>
+
+<p class="text-zinc-600 text-sm">
+请在付款备注中填写下面的订单号，方便我们匹配您的付款。
+</p>
+
+<div class="rounded-xl bg-zinc-50 p-4">
+
+<div class="text-xs text-zinc-500">
+订单号
+</div>
+
+<div id="orderId" class="font-mono text-lg">
+Generating...
+</div>
+
+</div>
+
+<p class="text-sm text-zinc-600">
+付款备注示例：
+<span id="orderNote" class="font-mono"></span>
+</p>
+
+<div class="flex gap-3 pt-2">
+
+<a
+href="/"
+class="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm hover:bg-zinc-50"
+>
+返回
+</a>
+
+<a
+href="/canadiandramaticarts#payment"
+class="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+>
+查看付款方式
+</a>
+
+</div>
+
+</div>
+
+</main>
+
+<script>
+
+function generateOrderId() {
+
+const now = new Date()
+
+const y = now.getFullYear()
+const m = String(now.getMonth()+1).padStart(2,'0')
+const d = String(now.getDate()).padStart(2,'0')
+const h = String(now.getHours()).padStart(2,'0')
+const min = String(now.getMinutes()).padStart(2,'0')
+const s = String(now.getSeconds()).padStart(2,'0')
+
+return `ORD-${y}${m}${d}${h}${min}${s}`
+
+}
+
+const orderId = generateOrderId()
+
+document.getElementById("orderId").innerText = orderId
+document.getElementById("orderNote").innerText = orderId
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+---
+import "../../styles/global.css";
+
+const event = {
+  title: "风中摇曳的洋紫荆",
+  subtitle: "加拿大话剧团出品",
+  date: "2026年3月22日（周日） 3:00–5:00 PM",
+  venue: "4211 Number 3 Rd, Richmond, BC V6X 1X6",
+  poster: "/events/yangzijing.png",
+  contact: {
+    wechat: "A2321380933",
+    email: "ccda5577@gmail.com",
+    phone: "778-238-7777",
+  },
+  tickets: [
+    { id: "early", name: "早鸟票", price: 30, note: "数量有限" },
+    { id: "regular", name: "普通票", price: 38, note: "普通入场" },
+    { id: "vip", name: "VIP票", price: 66, note: "优先座位 + 赠饮" },
+  ],
+  payment: {
+    method: "Interac e-Transfer",
+    recipient: "ccda5577@gmail.com",
+    noteRule: "付款备注请填写：订单号 + 姓名",
+    confirmSla: "付款后请添加官方微信确认购票信息。",
+  },
+  faq: [
+    {
+      q: "可以退票吗？",
+      a: "票一经售出，原则上不退。如需转让，请提前联系我们修改观演人姓名。",
+    },
+    {
+      q: "入场时需要出示什么？",
+      a: "请出示付款记录和购票姓名，我们会现场人工核对。",
+    },
+    {
+      q: "可以现场付款吗？",
+      a: "如仍有余票，可联系主办方确认是否支持现场付款。",
+    },
+  ],
+};
+
+const orderId = `ORD-${new Date()
+  .toISOString()
+  .slice(0, 10)
+  .replaceAll("-", "")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{event.title}</title>
+    <meta name="description" content={`${event.title} - 购票页面`} />
+  </head>
+
+  <body class="min-h-screen bg-zinc-50 text-zinc-900">
+    <header class="sticky top-0 z-50 border-b bg-white/85 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <div class="font-semibold">{event.title}</div>
+
+        <div class="flex items-center gap-2">
+          <a href="/" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">返回首页</a>
+          <a href="#intro" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">剧目介绍</a>
+          <a href="#tickets" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">票种</a>
+          <a href="#payment" class="rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">付款方式</a>
+          <a
+            href="#buy"
+            class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+          >
+            立即购票
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-10">
+      <!-- Hero -->
+      <section class="grid gap-8 md:grid-cols-2 md:items-start">
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <div class="inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
+              近期演出
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{event.title}</h1>
+            <p class="text-base text-zinc-600">{event.subtitle}</p>
+          </div>
+
+          <div class="space-y-2 text-zinc-700">
+            <div class="flex items-start gap-2">
+              <span class="mt-0.5 inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
+                时间
+              </span>
+              <span>{event.date}</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="mt-0.5 inline-flex rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
+                地点
+              </span>
+              <span>{event.venue}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-2">
+            <a
+              href="#buy"
+              class="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800"
+            >
+              立即购票
+            </a>
+            <a
+              href="#intro"
+              class="rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm font-medium hover:bg-zinc-50"
+            >
+              查看剧目介绍
+            </a>
+          </div>
+
+          <div class="rounded-xl border border-zinc-200 bg-white p-4 text-sm text-zinc-600 shadow-sm">
+            <div class="font-medium text-zinc-900">购票方式</div>
+            提交表单后，请按下方付款方式完成转账。本站采用人工对账确认，不是自动出票系统。
+          </div>
+        </div>
+
+        <!-- Poster -->
+        <div class="overflow-hidden rounded-2xl border border-zinc-200 bg-black shadow-sm">
+          <div class="aspect-[9/16] flex items-center justify-center">
+            <img
+              src={event.poster}
+              alt={event.title}
+              class="h-full w-full object-contain"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Intro -->
+      <section
+        id="intro"
+        class="mt-12 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4 text-zinc-700"
+      >
+        <h2 class="text-2xl font-semibold text-zinc-900">我们重新定义“看戏”</h2>
+
+        <p class="font-medium">加拿大话剧团，做“戏剧+”文化消费的拓路人。</p>
+
+        <p>
+          当戏剧走出象牙塔式的殿堂，当故事在你身边呼吸与心跳——这不再是一场静坐的观摩，而是一次可感、可触、可消费的生活方式。
+        </p>
+
+        <p>
+          加拿大话剧团，以时代之思，融艺术科技，致力于成为“戏剧+”文化娱乐消费模式的拓路人。我们打破舞台与观众的边界，将经典戏剧的内核，注入沉浸式体验、电影化叙事与当代社会思考的新潮之中。
+        </p>
+
+        <h3 class="pt-2 text-lg font-semibold text-zinc-900">
+          🎭 我们的实践之作：原创沉浸式话剧《风中摇曳的洋紫荆》
+        </h3>
+
+        <p>这不仅是一部话剧，更是我们践行“剧本杀戏剧+”理念的完整宣言。</p>
+
+        <ul class="list-disc space-y-3 pl-5">
+          <li>
+            <b>+时代思想：</b>
+            我们直面后疫情时代华裔移民家庭的真实阵痛——子女教育、校园霸凌、情感危机。这不仅是舒琦一家的故事，更是万千家庭共同思考的映照。
+          </li>
+          <li>
+            <b>+艺术新潮：</b>
+            导演赵越大胆运用电影蒙太奇、跳跃闪回、内心独白等先锋叙事手法，让舞台变成一块巨大的情感画布，剧情在现实与回忆间流畅穿梭，带来前所未有的艺术冲击力。
+          </li>
+          <li>
+            <b>+生活体验：</b>
+            我们撤去艺术的“高墙”。在温哥华剧院，故事就发生在观众身边。您不再是旁观者，而是悲欢离合的见证人，是紧张调查的参与者。戏剧，从遥远的欣赏，变成了您身边正在发生的生活。
+          </li>
+        </ul>
+
+        <h3 class="pt-2 text-lg font-semibold text-zinc-900">🌹 剧情快览</h3>
+
+        <p>
+          一桩离奇凶杀案，撕开了两个华裔移民家庭的平静表象。在送女儿赴美上藤校的前夜，夫妻双双离世，女儿昏迷不醒。侦探查理的调查，如同剥开洋葱，层层揭示出这个家庭在荣耀与伤痛、爱与背叛间的挣扎与抉择。
+        </p>
+
+        <h3 class="pt-2 text-lg font-semibold text-zinc-900">🎬 我们的使命</h3>
+
+        <p>
+          作为加拿大联邦注册的非牟利机构，我们旨在打造直指人心的戏剧作品，抒发人间真善美，并促进中加文化交流。我们相信，戏剧不应是少数人的专享，而应成为一种普罗大众可体验、可消费的日常娱乐选择。
+        </p>
+
+        <h3 class="pt-2 text-lg font-semibold text-zinc-900">👏 来自观众的肯定</h3>
+
+        <blockquote class="border-l-4 border-zinc-200 pl-4 italic text-zinc-600">
+          “我从未想过话剧可以这样演。我仿佛走进了他们的生活，那些关于教育、亲情的挣扎让我数次泪目。这不只是一场演出，更像是一次深刻的情感共鸣和自我反思。”
+        </blockquote>
+      </section>
+
+      <!-- Tickets -->
+      <section id="tickets" class="mt-12">
+        <div class="mb-4 flex items-end justify-between">
+          <h2 class="text-2xl font-semibold">票种信息</h2>
+          <p class="text-sm text-zinc-600">请选择适合你的票种，再填写下方购票表单。</p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          {event.tickets.map((t) => (
+            <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-lg font-semibold">{t.name}</div>
+                  <div class="text-sm text-zinc-600">{t.note}</div>
+                </div>
+                <div class="text-xl font-bold">${t.price}</div>
+              </div>
+
+              <div class="mt-4">
+                <button
+                  class="w-full rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-zinc-800"
+                  data-ticket={t.id}
+                >
+                  选择此票种
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <!-- Order + Payment -->
+      <section id="buy" class="mt-12">
+        <div class="mb-4">
+          <h2 class="text-2xl font-semibold">填写购票信息</h2>
+          <p class="text-sm text-zinc-600">
+            提交后会生成订单号。付款时请把订单号写进备注，方便人工核对。
+          </p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+          <form
+            class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+            method="GET"
+            action="/canadiandramaticarts/success"
+          >
+            <input type="hidden" name="order" value={orderId} />
+
+            <div class="grid gap-4">
+              <div>
+                <label class="mb-1 block text-sm font-medium">姓名</label>
+                <input
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  name="name"
+                  required
+                />
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium">邮箱</label>
+                <input
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  type="email"
+                  name="email"
+                  required
+                />
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-sm font-medium">票种</label>
+                  <select
+                    id="ticketSelect"
+                    class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                    name="ticket"
+                    required
+                  >
+                    {event.tickets.map((t) => (
+                      <option value={t.id}>{t.name} (${t.price})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm font-medium">数量</label>
+                  <input
+                    class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                    type="number"
+                    name="qty"
+                    min="1"
+                    max="10"
+                    value="1"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="mb-1 block text-sm font-medium">备注（可选）</label>
+                <textarea
+                  class="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-zinc-900/20"
+                  name="notes"
+                  rows="4"
+                  placeholder="例如：同行人姓名、特殊需求等"
+                ></textarea>
+              </div>
+
+              <button
+                class="rounded-xl bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800"
+                type="submit"
+              >
+                提交订单
+              </button>
+
+              <div class="text-xs text-zinc-500">
+                提交后你会看到订单号，请在付款备注中填写该订单号。
+              </div>
+            </div>
+          </form>
+
+          <aside
+            id="payment"
+            class="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm"
+          >
+            <h3 class="text-lg font-semibold">付款方式</h3>
+
+            <div class="mt-3 space-y-3 text-sm text-zinc-700">
+              <div class="flex justify-between gap-3">
+                <span class="text-zinc-500">方式</span>
+                <span class="font-medium">{event.payment.method}</span>
+              </div>
+
+              <div class="flex justify-between gap-3">
+                <span class="text-zinc-500">收款人</span>
+                <span class="font-medium">{event.payment.recipient}</span>
+              </div>
+
+              <div class="rounded-xl bg-zinc-50 p-3">
+                <div class="text-zinc-500">付款备注</div>
+                <div class="mt-1 font-mono text-xs md:text-sm">{event.payment.noteRule}</div>
+              </div>
+
+              <div class="text-zinc-600">{event.payment.confirmSla}</div>
+            </div>
+
+            <div class="mt-5 rounded-xl border border-zinc-200 bg-white p-4 text-sm">
+              <div class="font-medium">联系方式</div>
+              <div class="mt-1 text-zinc-600">
+                微信：<b>{event.contact.wechat}</b><br />
+                邮箱：<b>{event.contact.email}</b><br />
+                电话：<b>{event.contact.phone}</b>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="mt-12">
+        <h2 class="text-2xl font-semibold">常见问题</h2>
+        <div class="mt-4 grid gap-4 md:grid-cols-2">
+          {event.faq.map((item) => (
+            <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div class="font-semibold">{item.q}</div>
+              <div class="mt-2 text-sm text-zinc-600">{item.a}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer class="mt-12 border-t border-zinc-200 py-8 text-sm text-zinc-600">
+        © {new Date().getFullYear()} 加拿大话剧团
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        const select = document.getElementById("ticketSelect");
+        const buttons = document.querySelectorAll("button[data-ticket]");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-ticket");
+            if (select && id) select.value = id;
+            document.getElementById("buy")?.scrollIntoView({ behavior: "smooth" });
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
